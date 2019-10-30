@@ -33,6 +33,10 @@ public class Task {
                 " description: " + description;
     }
 
+    public void info(){
+        System.out.println(this);
+    }
+
 //    @Override
 //    public boolean equals(Object obj) {
 //        if(obj == null || !(obj instanceof Task)) return false;
