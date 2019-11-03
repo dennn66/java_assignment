@@ -40,10 +40,10 @@ public class Task {
 
 
 
-public class TaskTracker {
+public class TaskService {
     private Task[] tasks;
 
-    public TaskTracker() {
+    public TaskService() {
         this.tasks = new Task[10];
     }
 
@@ -95,7 +95,7 @@ public class TaskTracker {
 public class MainApp {
     public static void main(String[] args) {
         System.out.println("Program start");
-        TaskTracker tracker = new TaskTracker();
+        TaskService tracker = new TaskService();
         for(int i = 0; i< 11; i++){
             Task task = new Task(i, "Important task #" + i, "Bill", "John",
                     "very important task", "assigned");

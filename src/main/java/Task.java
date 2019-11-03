@@ -1,21 +1,52 @@
 public class Task {
-    private int id;//id,
+    private Long id;//id,
     private String name;// название,
     private String creator;// имя владельца задачи,
     private String assignee; // имя исполнителя,
     private String description; // описание,
-    private String status; // статус
+    private Status status; // статус
+    enum Status {
+        CREATED("Открыта"), ASSIGNED("Назначена"), COMPLETED("Завершена");
+        String name;
 
-    public Task(int id, String name, String creator, String assignee, String description, String status) {
+        Status(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "'" + name + "'";
+        }
+    }
+
+    public Task(Long id, String name, String creator, String description) {
         this.id = id;
         this.name = name;
         this.creator = creator;
-        this.assignee = assignee;
         this.description = description;
-        this.status = status;
+        this.status = Status.CREATED;
     }
 
-    public int getId() {
+    public Status getStatus() {
+        return status;
+    }
+
+    public void closeTask() {
+        this.status = Status.COMPLETED;
+    }
+
+    public void setAssignee(String assignee) {
+        if(this.status != Status.COMPLETED) {
+            this.assignee = assignee;
+            this.status = (this.assignee == null) ? Status.CREATED : Status.ASSIGNED;
+        } else {
+            //Raise Exception
+            System.out.println("ERROR: Task is completed");
+        }
+
+    }
+
+    public Long getId() {
         return id;
     }
 
@@ -37,9 +68,20 @@ public class Task {
         System.out.println(this);
     }
 
-//    @Override
-//    public boolean equals(Object obj) {
-//        if(obj == null || !(obj instanceof Task)) return false;
-//        return ((Task)obj).id == this.id;
-//    }
+    @Override
+    public boolean equals(Object obj) {
+        if(
+                this.id == null ||
+                this.name == null ||
+                !(obj instanceof Task) ||
+                ((Task) obj).id == null ||
+                ((Task) obj).name == null
+        ) return false;
+        return ((Task)obj).id.equals(this.id) && ((Task)obj).name.equals(this.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) ((this.id + name.hashCode()) % Integer.MAX_VALUE);
+    }
 }
