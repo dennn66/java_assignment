@@ -1,0 +1,195 @@
+public interface TaskRepository {
+    Task getTask(int index);
+    void setTask(int index, Task task);
+    long size();
+    String toString();
+}
+
+
+public class TaskArray implements TaskRepository {
+    private Task[] tasks;
+
+    public TaskArray() {
+        this.tasks = new Task[10];
+    }
+
+    @Override
+    public Task getTask(int index) {
+        return tasks[index];
+    }
+
+    @Override
+    public void setTask(int index, Task task) {
+        this.tasks[index] = task;
+    }
+
+    @Override
+    public long size() {
+        return tasks.length;
+    }
+
+    @Override
+    public String toString() {
+        String taskList = "";
+        for (Task task : this.tasks) {
+            if (task != null) taskList += task.toString() + "\r\n";
+        }
+        return taskList;
+    }
+}
+
+
+public class TaskService {
+    private TaskRepository tasks;
+
+    public TaskService() {
+        this.tasks = new TaskArray();
+    }
+
+    public void addTask(Task task) {
+        if(task == null) return;
+        for(int index = 0; index < tasks.size(); index++){
+            if(tasks.getTask(index) == null){
+                tasks.setTask(index,task);
+                return;
+            }
+        }
+        System.out.println("ERROR: Task list is full, task '" + task.getName() + "' isn't inserted");
+    }
+
+    public void deleteTask(int taskId) {
+        for(int index = 0; index < tasks.size(); index++){
+            if(tasks.getTask(index) != null && tasks.getTask(index).getId() == taskId){
+                tasks.setTask(index, null);
+                return;
+            }
+        }
+        System.out.println("ERROR: Task not found (id = " + taskId + ")");
+    }
+
+    public void deleteTask(String taskName) {
+        for(int index = 0; index < tasks.size(); index++){
+            if(tasks.getTask(index) != null && tasks.getTask(index).getName().equals(taskName)){
+                tasks.setTask(index, null);
+                return;
+            }
+        }
+        System.out.println("ERROR: Task not found (name: '" + taskName + "')");
+    }
+
+    @Override
+    public String toString() {return tasks.toString(); }
+
+    public void info(){
+        System.out.println(this);
+    }
+}
+
+public class Task {
+    private Long id;//id,
+    private String name;// название,
+    private String creator;// имя владельца задачи,
+    private String assignee; // имя исполнителя,
+    private String description; // описание,
+    private Status status; // статус
+    enum Status {
+        CREATED("Открыта"), ASSIGNED("Назначена"), COMPLETED("Завершена");
+        String name;
+
+        Status(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "'" + name + "'";
+        }
+    }
+
+    public Task(Long id, String name, String creator, String description) {
+        this.id = id;
+        this.name = name;
+        this.creator = creator;
+        this.description = description;
+        this.status = Status.CREATED;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void closeTask() {
+        this.status = Status.COMPLETED;
+    }
+
+    public void setAssignee(String assignee) {
+        if(this.status != Status.COMPLETED) {
+            this.assignee = assignee;
+            this.status = (this.assignee == null) ? Status.CREATED : Status.ASSIGNED;
+        } else {
+            //Raise Exception
+            System.out.println("ERROR: Task is completed");
+        }
+
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return id +
+                " " + name +
+                " status:" + status +
+                " assignee:" + assignee +
+                " author:" + creator +
+                " description: " + description;
+    }
+
+    public void info(){
+        System.out.println(this);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(
+                this.id == null ||
+                this.name == null ||
+                !(obj instanceof Task) ||
+                ((Task) obj).id == null ||
+                ((Task) obj).name == null
+        ) return false;
+        return ((Task)obj).id.equals(this.id) && ((Task)obj).name.equals(this.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) ((this.id + name.hashCode()) % Integer.MAX_VALUE);
+    }
+}
+
+public class MainApp {
+    public static void main(String[] args) {
+        System.out.println("Program start");
+        TaskService tracker = new TaskService();
+        for(Long taskId = 1000L; taskId< 1011L; taskId++){
+            Task task = new Task(taskId, "Important task #" + taskId, "Bill",  "very important task");
+            tracker.addTask(task);
+            if( taskId % 2 == 0) task.setAssignee("John");
+            if( taskId % 3 == 0) task.closeTask();
+            task.info();
+        }
+        tracker.addTask(null);
+        tracker.deleteTask(1003);
+        tracker.deleteTask(1015);
+        tracker.deleteTask("Important task #1007");
+        tracker.deleteTask("Important task #1015");
+        tracker.info();
+    }
+}
+
