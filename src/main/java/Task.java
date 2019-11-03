@@ -56,12 +56,13 @@ public class Task {
 
     @Override
     public String toString() {
-        return id +
-                " " + name +
-                " status:" + status +
-                " assignee:" + assignee +
-                " author:" + creator +
-                " description: " + description;
+        StringBuilder TaskString = new StringBuilder();
+        return TaskString.append(id).
+                append(" ").append(name).
+                append(" status:").append(status).
+                append(" assignee:").append(assignee).
+                append(" author:").append(creator).
+                append(" description: ").append(description).toString();
     }
 
     public void info(){
