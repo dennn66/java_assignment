@@ -1,6 +1,6 @@
 
 
-public class TaskService {
+public class TaskService implements TaskRepository {
     private TaskRepository tasks;
 
     public TaskService() {

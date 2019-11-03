@@ -7,7 +7,7 @@ public interface TaskRepository {
     String toString();
 }
 
-public class TaskService {
+public class TaskService implements TaskRepository {
     private TaskRepository tasks;
 
     public TaskService() {
@@ -27,6 +27,7 @@ public class TaskService {
         System.out.println(this);
     }
 }
+
 
 public class TaskArray implements TaskRepository {
     private Task[] tasks;
