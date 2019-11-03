@@ -1,6 +1,8 @@
 public interface TaskRepository {
-    Task getTask(int index);
-    void setTask(int index, Task task);
-    long size();
+    Task findTask(Long taskId);
+    Task findTask(String taskName);
+    void addTask(Task task);
+    void deleteTask(Long taskId);
+    void deleteTask(String taskName);
     String toString();
 }

@@ -7,36 +7,11 @@ public class TaskService {
         this.tasks = new TaskArray();
     }
 
-    public void addTask(Task task) {
-        if(task == null) return;
-        for(int index = 0; index < tasks.size(); index++){
-            if(tasks.getTask(index) == null){
-                tasks.setTask(index,task);
-                return;
-            }
-        }
-        System.out.println("ERROR: Task list is full, task '" + task.getName() + "' isn't inserted");
-    }
-
-    public void deleteTask(int taskId) {
-        for(int index = 0; index < tasks.size(); index++){
-            if(tasks.getTask(index) != null && tasks.getTask(index).getId() == taskId){
-                tasks.setTask(index, null);
-                return;
-            }
-        }
-        System.out.println("ERROR: Task not found (id = " + taskId + ")");
-    }
-
-    public void deleteTask(String taskName) {
-        for(int index = 0; index < tasks.size(); index++){
-            if(tasks.getTask(index) != null && tasks.getTask(index).getName().equals(taskName)){
-                tasks.setTask(index, null);
-                return;
-            }
-        }
-        System.out.println("ERROR: Task not found (name: '" + taskName + "')");
-    }
+    public void addTask(Task task) { tasks.addTask(task); }
+    public Task findTask(Long taskId) { return tasks.findTask(taskId);}
+    public Task findTask(String taskName) {return tasks.findTask(taskName);}
+    public void deleteTask(Long taskId) { tasks.deleteTask(taskId);}
+    public void deleteTask(String taskName) {tasks.deleteTask(taskName);}
 
     @Override
     public String toString() {return tasks.toString(); }

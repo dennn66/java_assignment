@@ -5,13 +5,15 @@ public class MainApp {
         for(Long taskId = 1000L; taskId< 1011L; taskId++){
             Task task = new Task(taskId, "Important task #" + taskId, "Bill",  "very important task");
             tracker.addTask(task);
-            if( taskId % 2 == 0) task.setAssignee("John");
-            if( taskId % 3 == 0) task.closeTask();
             task.info();
         }
         tracker.addTask(null);
-        tracker.deleteTask(1003);
-        tracker.deleteTask(1015);
+        tracker.findTask(1004L).setAssignee("John");
+        tracker.findTask("Important task #1006").setAssignee("John");
+        tracker.findTask("Important task #1002").closeTask();
+        tracker.findTask("Important task #1002").setAssignee("John");
+        tracker.deleteTask(1003L);
+        tracker.deleteTask(1015L);
         tracker.deleteTask("Important task #1007");
         tracker.deleteTask("Important task #1015");
         tracker.info();
