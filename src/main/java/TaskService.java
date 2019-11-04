@@ -1,29 +1,27 @@
 
 
-public class TaskService implements TaskRepository {
-    private TaskRepository tasks;
+public class TaskService {
+    private TaskRepository taskRepository;
 
     public TaskService() {
-        this.tasks = new TaskArray();
+        taskRepository = new TaskArray();
     }
 
-    @Override
-    public void addTask(Task task) { tasks.addTask(task); }
+    public void addTask(Task task) throws TaskRepositoryIsFullException { taskRepository.addTask(task); }
+    public Task findTask(Long taskId) throws TaskNotFoundException { return taskRepository.findTask(taskId);}
+    public Task findTask(String taskName) throws TaskNotFoundException {return taskRepository.findTask(taskName);}
+    public void deleteTask(Long taskId) throws TaskNotFoundException { taskRepository.deleteTask(taskId);}
+    public void deleteTask(String taskName) throws TaskNotFoundException {taskRepository.deleteTask(taskName);}
 
     @Override
-    public Task findTask(Long taskId) { return tasks.findTask(taskId);}
-
-    @Override
-    public Task findTask(String taskName) {return tasks.findTask(taskName);}
-
-    @Override
-    public void deleteTask(Long taskId) { tasks.deleteTask(taskId);}
-
-    @Override
-    public void deleteTask(String taskName) {tasks.deleteTask(taskName);}
-
-    @Override
-    public String toString() {return tasks.toString(); }
+    public String toString() {
+        Task[] tasks = taskRepository.getTasks();
+        StringBuilder taskList = new StringBuilder();
+        for (Task task : tasks) {
+            if (task != null) taskList.append(task).append("\r\n");
+        }
+        return taskList.toString();
+    }
 
     public void info(){
         System.out.println(this);

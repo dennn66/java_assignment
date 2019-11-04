@@ -24,35 +24,18 @@ public class Task {
         this.name = name;
         this.creator = creator;
         this.description = description;
-        this.status = Status.CREATED;
+        status = Status.CREATED;
     }
 
     public Status getStatus() {
         return status;
     }
-
     public void closeTask() {
-        this.status = Status.COMPLETED;
+        status = Status.COMPLETED;
     }
-
-    public void setAssignee(String assignee) {
-        if(this.status != Status.COMPLETED) {
-            this.assignee = assignee;
-            this.status = (this.assignee == null) ? Status.CREATED : Status.ASSIGNED;
-        } else {
-            //Raise Exception
-            System.out.println("ERROR: Task is completed");
-        }
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
+    public void setAssignee(String assignee) { this.assignee = assignee; }
+    public Long getId() { return id; }
+    public String getName() { return name; }
 
     @Override
     public String toString() {
@@ -65,24 +48,15 @@ public class Task {
                 append(" description: ").append(description).toString();
     }
 
-    public void info(){
-        System.out.println(this);
-    }
+    public void info(){  System.out.println(this); }
 
     @Override
     public boolean equals(Object obj) {
-        if(
-                this.id == null ||
-                this.name == null ||
-                !(obj instanceof Task) ||
-                ((Task) obj).id == null ||
-                ((Task) obj).name == null
-        ) return false;
-        return ((Task)obj).id.equals(this.id) && ((Task)obj).name.equals(this.name);
+        if(obj == null) return false;
+        if(!(obj instanceof Task)) return false;
+        return ((Task)obj).id.equals(id) && ((Task)obj).name.equals(name);
     }
 
     @Override
-    public int hashCode() {
-        return (int) ((this.id + name.hashCode()) % Integer.MAX_VALUE);
-    }
+    public int hashCode() { return id.intValue() + name.hashCode(); }
 }

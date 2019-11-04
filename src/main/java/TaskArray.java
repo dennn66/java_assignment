@@ -3,88 +3,69 @@ public class TaskArray implements TaskRepository {
     private final int size = 10;
 
     public TaskArray() {
-        this.tasks = new Task[size];
+        tasks = new Task[size];
     }
 
-    private Task getTask(Integer index) {
+    private Task getTask(Integer index)  throws TaskNotFoundException {
         if(index != null && index >= 0 && index < size) return tasks[index];
-        else return null;
+        else throw new TaskNotFoundException("Task not found");
     }
 
-    private void setTask(Integer index, Task task) {
-        if(index != null && index >= 0 && index < size) this.tasks[index] = task;
-        else System.out.println("ERROR: Index out of range");
+    private void setTask(Integer index, Task task) throws TaskNotFoundException {
+        if(index != null && index >= 0 && index < size) tasks[index] = task;
+        else throw new TaskNotFoundException("Task not found");
     }
 
 
-    private Integer findTaskIndex(Long taskId) {
+    private int findTaskIndex(Long taskId) {
         for(int index = 0; index < size; index++){
             if(getTask(index) != null && getTask(index).getId().equals(taskId)){
                 return index;
             }
         }
-        return null;
+        return -1;
     }
 
-    private Integer findTaskIndex(String taskName) {
+    private int findTaskIndex(String taskName) {
         for(int index = 0; index < size; index++){
-            if(getTask(index) != null && getTask(index).getName().equals(taskName)){
-                return index;
-            }
+            if(getTask(index) != null && getTask(index).getName().equals(taskName)) return index;
         }
-        return null;
+        return -1;
     }
-    private Integer findTaskIndex(Task task) {
+    private int findTaskIndex(Task task) {
         for(int index = 0; index < size; index++){
             if(task == null){
-                if(getTask(index) == null){
-                    return index;
-                }
-            } else if(getTask(index).equals(task)){
-                return index;
-            }
+                if(getTask(index) == null)  return index;
+            } else if(getTask(index).equals(task)) return index;
         }
-        return null;
+        return -1;
     }
 
-    private void deleteTaskByIndex(Integer index) {
-        if(index != null){
-            setTask(index, null);
-        } else {
-            System.out.println("ERROR: Task not found");
-        }
-    }
+    private void deleteTaskByIndex(int index) {  setTask(index, null); }
 
 
     @Override
-    public void addTask(Task task) {
+    public void addTask(Task task) throws TaskRepositoryIsFullException {
         if(task == null) return;
-        Integer index = findTaskIndex((Task) null);
-        if(index == null) {
-            System.out.println("ERROR: Task list is full, task '" + task.getName() + "' isn't inserted");
-        } else {
-            setTask(index,task);
-        }
+        int index = findTaskIndex((Task) null);
+
+        if(index < 0)  throw new TaskRepositoryIsFullException("Task repository is full, task '" +
+                    task.getName() + "' isn't inserted");
+        else setTask(index,task);
     }
 
     @Override
-    public Task findTask(Long taskId) { return getTask(findTaskIndex(taskId)); }
+    public Task findTask(Long taskId) throws TaskNotFoundException { return getTask(findTaskIndex(taskId)); }
 
     @Override
-    public Task findTask(String taskName) { return getTask(findTaskIndex(taskName)); }
+    public Task findTask(String taskName)  throws TaskNotFoundException { return getTask(findTaskIndex(taskName)); }
 
     @Override
-    public void deleteTask(Long taskId) { deleteTaskByIndex(findTaskIndex(taskId)); }
+    public void deleteTask(Long taskId)  throws TaskNotFoundException { deleteTaskByIndex(findTaskIndex(taskId)); }
 
     @Override
-    public void deleteTask(String taskName) { deleteTaskByIndex(findTaskIndex(taskName)); }
+    public void deleteTask(String taskName)  throws TaskNotFoundException { deleteTaskByIndex(findTaskIndex(taskName)); }
 
     @Override
-    public String toString() {
-        StringBuilder taskList = new StringBuilder();
-        for (Task task : tasks) {
-            if (task != null) taskList.append(task).append("\r\n");
-        }
-        return taskList.toString();
-    }
+    public Task[] getTasks() { return tasks; }
 }

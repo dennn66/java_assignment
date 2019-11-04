@@ -4,5 +4,5 @@ public interface TaskRepository {
     void addTask(Task task);
     void deleteTask(Long taskId);
     void deleteTask(String taskName);
-    String toString();
+    Task[] getTasks();
 }

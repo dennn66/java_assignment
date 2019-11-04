@@ -1,0 +1,309 @@
+package ExceptionAssignement;
+
+public class MyArrayDataException extends RuntimeException {
+    public MyArrayDataException(String s) {
+        super(s);
+    }
+}
+
+package ExceptionAssignement;
+
+public class MySizeArrayException extends RuntimeException {
+    public MySizeArrayException(String s) {
+        super(s);
+    }
+}
+
+package ExceptionAssignement;
+
+public class StringToIntArraySummator {
+    private static  final int size = 4;
+    public static int sum(String[][] matrix) throws MyArrayDataException, MySizeArrayException{
+        if(matrix.length != size){
+            throw new MySizeArrayException("Array size must be " +
+                    size + "X" + size + ", got " + matrix.length + " rows");
+        }
+        int sum = 0;
+        for(int row = 0; row < size; row++){
+            if(matrix[row].length != size){
+                throw new MySizeArrayException("Array size must be " +
+                    size + "X" + size + ", got " + matrix[row].length + " cells in row #" + row);
+            }
+            for(int col = 0; col < size; col++){
+                try{
+                    sum += Integer.parseInt(matrix[row][col]);
+                } catch (NumberFormatException e) {
+                    throw new MyArrayDataException("Cannot convert cell (" +
+                            row + "," + col + ") to Integer. Wrong format: '" + matrix[row][col] + "'");
+                }
+            }
+        }
+        return sum;
+    }
+}
+
+
+import ExceptionAssignement.MyArrayDataException;
+import ExceptionAssignement.MySizeArrayException;
+import ExceptionAssignement.StringToIntArraySummator;
+
+public class MainApp {
+    public static void main(String[] args) {
+        System.out.println("Program start");
+        String[][][] matrixs = {
+                {
+                        {"1", "1","1","1"},
+                        {"1", "1","1","1"},
+                        {"1", "1","1","1"},
+                        {"1", "1","1", "1"},
+                        {"1", "1","1","1"}
+                },
+                {
+                        {"1", "1","1","1"},
+                        {"1", "1","1","1"},
+                        {"1", "1","1"},
+                        {"1", "1","1", "1"},
+                },
+                {
+                        {"1", "1","1","1"},
+                        {"1", "1","1","1"},
+                        {"1", "1"," X ","1"},
+                        {"1", "1","1","1"}
+                },
+                {
+                        {"1", "1","1","1"},
+                        {"1", "1","1","1"},
+                        {"1", "1","1","1"},
+                        {"1", "1","1","1"}
+                },
+        };
+        for(String[][] matrix: matrixs){
+            try{
+                int result = StringToIntArraySummator.sum(matrix);
+                System.out.println("Conversion result: " + result);
+            } catch (MySizeArrayException | MyArrayDataException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
+
+        TaskService tracker = new TaskService();
+
+        for(Long taskId = 1000L; taskId< 1011L; taskId++){
+            Task task = new Task(taskId, "Important task #" + taskId, "Bill",  "very important task");
+            try {
+                tracker.addTask(task);
+                task.info();
+            } catch (TaskRepositoryIsFullException e){
+                System.out.println(e.getMessage());
+            }
+        }
+        tracker.addTask(null);
+        tracker.findTask(1004L).setAssignee("John");
+        tracker.findTask("Important task #1006").setAssignee("John");
+        tracker.findTask("Important task #1002").closeTask();
+        tracker.findTask("Important task #1002").setAssignee("John");
+        tracker.deleteTask(1003L);
+        try {
+            tracker.deleteTask(1015L);
+        } catch (TaskNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+        tracker.deleteTask("Important task #1007");
+        try {
+            tracker.deleteTask("Important task #1015");
+        } catch (TaskNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+        tracker.info();
+    }
+}
+
+
+public class TaskNotFoundException extends RuntimeException {
+
+    public TaskNotFoundException(String task_not_found) {
+        super(task_not_found);
+    }
+}
+
+public class TaskRepositoryIsFullException extends RuntimeException {
+    public TaskRepositoryIsFullException(String s) {
+        super(s);
+    }
+}
+
+public interface TaskRepository {
+    Task findTask(Long taskId);
+    Task findTask(String taskName);
+    void addTask(Task task);
+    void deleteTask(Long taskId);
+    void deleteTask(String taskName);
+    Task[] getTasks();
+}
+
+public class TaskService {
+    private TaskRepository taskRepository;
+
+    public TaskService() {
+        taskRepository = new TaskArray();
+    }
+
+    public void addTask(Task task) throws TaskRepositoryIsFullException { taskRepository.addTask(task); }
+    public Task findTask(Long taskId) throws TaskNotFoundException { return taskRepository.findTask(taskId);}
+    public Task findTask(String taskName) throws TaskNotFoundException {return taskRepository.findTask(taskName);}
+    public void deleteTask(Long taskId) throws TaskNotFoundException { taskRepository.deleteTask(taskId);}
+    public void deleteTask(String taskName) throws TaskNotFoundException {taskRepository.deleteTask(taskName);}
+
+    @Override
+    public String toString() {
+        Task[] tasks = taskRepository.getTasks();
+        StringBuilder taskList = new StringBuilder();
+        for (Task task : tasks) {
+            if (task != null) taskList.append(task).append("\r\n");
+        }
+        return taskList.toString();
+    }
+
+    public void info(){
+        System.out.println(this);
+    }
+}
+
+public class TaskArray implements TaskRepository {
+    private Task[] tasks;
+    private final int size = 10;
+
+    public TaskArray() {
+        tasks = new Task[size];
+    }
+
+    private Task getTask(Integer index)  throws TaskNotFoundException {
+        if(index != null && index >= 0 && index < size) return tasks[index];
+        else throw new TaskNotFoundException("Task not found");
+    }
+
+    private void setTask(Integer index, Task task) throws TaskNotFoundException {
+        if(index != null && index >= 0 && index < size) tasks[index] = task;
+        else throw new TaskNotFoundException("Task not found");
+    }
+
+
+    private int findTaskIndex(Long taskId) {
+        for(int index = 0; index < size; index++){
+            if(getTask(index) != null && getTask(index).getId().equals(taskId)){
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    private int findTaskIndex(String taskName) {
+        for(int index = 0; index < size; index++){
+            if(getTask(index) != null && getTask(index).getName().equals(taskName)) return index;
+        }
+        return -1;
+    }
+    private int findTaskIndex(Task task) {
+        for(int index = 0; index < size; index++){
+            if(task == null){
+                if(getTask(index) == null)  return index;
+            } else if(getTask(index).equals(task)) return index;
+        }
+        return -1;
+    }
+
+    private void deleteTaskByIndex(int index) {  setTask(index, null); }
+
+
+    @Override
+    public void addTask(Task task) throws TaskRepositoryIsFullException {
+        if(task == null) return;
+        int index = findTaskIndex((Task) null);
+
+        if(index < 0)  throw new TaskRepositoryIsFullException("Task repository is full, task '" +
+                    task.getName() + "' isn't inserted");
+        else setTask(index,task);
+    }
+
+    @Override
+    public Task findTask(Long taskId) throws TaskNotFoundException { return getTask(findTaskIndex(taskId)); }
+
+    @Override
+    public Task findTask(String taskName)  throws TaskNotFoundException { return getTask(findTaskIndex(taskName)); }
+
+    @Override
+    public void deleteTask(Long taskId)  throws TaskNotFoundException { deleteTaskByIndex(findTaskIndex(taskId)); }
+
+    @Override
+    public void deleteTask(String taskName)  throws TaskNotFoundException { deleteTaskByIndex(findTaskIndex(taskName)); }
+
+    @Override
+    public Task[] getTasks() { return tasks; }
+}
+
+public class Task {
+    private Long id;//id,
+    private String name;// название,
+    private String creator;// имя владельца задачи,
+    private String assignee; // имя исполнителя,
+    private String description; // описание,
+    private Status status; // статус
+    enum Status {
+        CREATED("Открыта"), ASSIGNED("Назначена"), COMPLETED("Завершена");
+        String name;
+
+        Status(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "'" + name + "'";
+        }
+    }
+
+    public Task(Long id, String name, String creator, String description) {
+        this.id = id;
+        this.name = name;
+        this.creator = creator;
+        this.description = description;
+        status = Status.CREATED;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+    public void closeTask() {
+        status = Status.COMPLETED;
+    }
+    public void setAssignee(String assignee) { this.assignee = assignee; }
+    public Long getId() { return id; }
+    public String getName() { return name; }
+
+    @Override
+    public String toString() {
+        StringBuilder TaskString = new StringBuilder();
+        return TaskString.append(id).
+                append(" ").append(name).
+                append(" status:").append(status).
+                append(" assignee:").append(assignee).
+                append(" author:").append(creator).
+                append(" description: ").append(description).toString();
+    }
+
+    public void info(){  System.out.println(this); }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null) return false;
+        if(!(obj instanceof Task)) return false;
+        return ((Task)obj).id.equals(id) && ((Task)obj).name.equals(name);
+    }
+
+    @Override
+    public int hashCode() { return id.intValue() + name.hashCode(); }
+}
+
