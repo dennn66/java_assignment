@@ -50,42 +50,6 @@ import ExceptionAssignement.StringToIntArraySummator;
 public class MainApp {
     public static void main(String[] args) {
         System.out.println("Program start");
-        String[][][] matrixs = {
-                {
-                        {"1", "1","1","1"},
-                        {"1", "1","1","1"},
-                        {"1", "1","1","1"},
-                        {"1", "1","1", "1"},
-                        {"1", "1","1","1"}
-                },
-                {
-                        {"1", "1","1","1"},
-                        {"1", "1","1","1"},
-                        {"1", "1","1"},
-                        {"1", "1","1", "1"},
-                },
-                {
-                        {"1", "1","1","1"},
-                        {"1", "1","1","1"},
-                        {"1", "1"," X ","1"},
-                        {"1", "1","1","1"}
-                },
-                {
-                        {"1", "1","1","1"},
-                        {"1", "1","1","1"},
-                        {"1", "1","1","1"},
-                        {"1", "1","1","1"}
-                },
-        };
-        for(String[][] matrix: matrixs){
-            try{
-                int result = StringToIntArraySummator.sum(matrix);
-                System.out.println("Conversion result: " + result);
-            } catch (MySizeArrayException | MyArrayDataException e) {
-                e.printStackTrace();
-            }
-        }
-
 
 
 
@@ -96,7 +60,7 @@ public class MainApp {
             try {
                 tracker.addTask(task);
                 task.info();
-            } catch (TaskRepositoryIsFullException e){
+            } catch (TaskExistException e){
                 System.out.println(e.getMessage());
             }
         }
@@ -129,8 +93,8 @@ public class TaskNotFoundException extends RuntimeException {
     }
 }
 
-public class TaskRepositoryIsFullException extends RuntimeException {
-    public TaskRepositoryIsFullException(String s) {
+public class TaskExistException extends RuntimeException {
+    public TaskExistException(String s) {
         super(s);
     }
 }
@@ -151,7 +115,7 @@ public class TaskService {
         taskRepository = new TaskArray();
     }
 
-    public void addTask(Task task) throws TaskRepositoryIsFullException { taskRepository.addTask(task); }
+    public void addTask(Task task) throws TaskExistException { taskRepository.addTask(task); }
     public Task findTask(Long taskId) throws TaskNotFoundException { return taskRepository.findTask(taskId);}
     public Task findTask(String taskName) throws TaskNotFoundException {return taskRepository.findTask(taskName);}
     public void deleteTask(Long taskId) throws TaskNotFoundException { taskRepository.deleteTask(taskId);}
@@ -219,11 +183,11 @@ public class TaskArray implements TaskRepository {
 
 
     @Override
-    public void addTask(Task task) throws TaskRepositoryIsFullException {
+    public void addTask(Task task) throws TaskExistException {
         if(task == null) return;
         int index = findTaskIndex((Task) null);
 
-        if(index < 0)  throw new TaskRepositoryIsFullException("Task repository is full, task '" +
+        if(index < 0)  throw new TaskExistException("Task repository is full, task '" +
                     task.getName() + "' isn't inserted");
         else setTask(index,task);
     }

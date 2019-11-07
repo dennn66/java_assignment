@@ -1,0 +1,193 @@
+package GenericAssignement;
+
+public abstract class Fruit {
+    private Float weight;
+
+    public Fruit(float weight) {
+        this.weight = weight;
+    }
+
+    public float getWeight() {
+        return weight;
+    }
+}
+
+package GenericAssignement;
+
+public class Apple extends Fruit {
+    public Apple() {
+        super(1.0f);
+    }
+}
+
+package GenericAssignement;
+
+public class Orange extends Fruit {
+    public Orange() {
+        super(1.5f);
+    }
+}
+
+package GenericAssignement;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Objects;
+
+public class Box <T extends Fruit> {
+    private ArrayList<T> fruits;
+
+    public Box() {
+        fruits = new ArrayList<>();
+    }
+    public float getWeight(){
+        if(fruits.size() > 0){
+            return fruits.get(0).getWeight() * fruits.size();
+        }
+        return 0.0f;
+    }
+
+    public void addFruit(T fruit){
+        fruits.add(fruit);
+    }
+
+    public boolean compare( Box<?> box) {
+        return Math.abs(getWeight() - box.getWeight()) < 0.0001f;
+    }
+
+    public void moveTo(Box<T> box){
+        Iterator<T> iter = fruits.iterator();
+        while (iter.hasNext()){
+            box.addFruit(iter.next());
+        }
+        fruits.clear();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Box)) return false;
+        Box<?> box = (Box<?>) o;
+        return Objects.equals(fruits, box.fruits);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fruits);
+    }
+
+    @Override
+    public String toString() {
+        return "Box{" +
+                "weight=" + getWeight() +
+                ", quantity=" + fruits.size() +
+                ", fruits=" + fruits +
+                '}';
+    }
+}
+
+import GenericAssignement.Apple;
+import GenericAssignement.Box;
+import GenericAssignement.Orange;
+
+public class MainApp {
+    public static void main(String[] args) {
+        System.out.println("Program start");
+
+        Box<Apple> boxA1 = new Box<>();
+        Box<Orange> boxO1 = new Box<>();
+        Box<Apple> boxA2 = new Box<>();
+
+        boxA1.addFruit(new Apple());
+        boxA1.addFruit(new Apple());
+        boxA1.addFruit(new Apple());
+        boxA1.addFruit(new Apple());
+
+        boxA2.addFruit(new Apple());
+
+        boxO1.addFruit(new Orange());
+
+        System.out.println(boxA1);
+        System.out.println(boxA2);
+        System.out.println(boxO1);
+
+        System.out.println("Box A1 is bigger then Box A2: " + boxA1.compare(boxA2));
+        System.out.println("Box A1 is bigger then Box O1: " + boxA1.compare(boxO1));
+
+        boxA1.moveTo(boxA2);
+        System.out.println(boxA1);
+        System.out.println(boxA2);
+
+
+
+        TaskService tracker = new TaskService();
+        tracker.test();
+    }
+}
+
+import java.util.ArrayList;
+
+public class TaskList implements TaskRepository {
+    private ArrayList<Task> tasks;
+
+    public TaskList() {
+        tasks = new ArrayList<>();
+    }
+
+    private Task getTask(Integer index)   {
+        if(index != null && index >= 0 && index < tasks.size()) return tasks.get(index);
+        else throw new TaskNotFoundException("Task not found");
+    }
+
+    private void setTask(Integer index, Task task)  {
+        if(index != null && index >= 0 && index < tasks.size()) tasks.set(index, task);
+        else throw new TaskNotFoundException("Task not found");
+    }
+    private void deleteTaskByIndex(Integer index) {
+        if(index != null && index >= 0 && index < tasks.size()) tasks.remove(index);
+        else throw new TaskNotFoundException("Task not found");
+    }
+
+
+    private int findTaskIndex(Long taskId) {
+        for(int index = 0; index < tasks.size(); index++){
+            if(getTask(index) != null && getTask(index).getId().equals(taskId)){
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    private int findTaskIndex(String taskName) {
+        for(int index = 0; index < tasks.size(); index++){
+            if(getTask(index) != null && getTask(index).getName().equals(taskName)) return index;
+        }
+        return -1;
+    }
+
+    @Override
+    public void addTask(Task task) {
+        if(tasks.indexOf(task) >= 0)  throw new TaskExistException("Task '" + task.getName() + "' already exist");
+        tasks.add(task);
+    }
+
+    @Override
+    public void updateTask(Task task) { setTask(tasks.indexOf(task), task);   }
+
+    @Override
+    public Task findTask(Long taskId) { return getTask(findTaskIndex(taskId)); }
+
+    @Override
+    public Task findTask(String taskName)   { return getTask(findTaskIndex(taskName)); }
+
+    @Override
+    public void deleteTask(Long taskId)   { deleteTaskByIndex(findTaskIndex(taskId)); }
+
+    @Override
+    public void deleteTask(String taskName)   { deleteTaskByIndex(findTaskIndex(taskName)); }
+
+    @Override
+    public ArrayList<Task>  getTasks() { return tasks; }
+}
+
+
