@@ -1,38 +1,29 @@
-import GenericAssignement.Apple;
-import GenericAssignement.Box;
-import GenericAssignement.Orange;
+import com.dennn66.phonebook.Phonebook;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainApp {
     public static void main(String[] args) {
         System.out.println("Program start");
+        Phonebook pb = new Phonebook();
+        pb.add("Den", "+79999999999");
+        pb.add("Den", "+79999999998");
+        pb.add("Pit", "+79999999997");
 
-        Box<Apple> boxA1 = new Box<>();
-        Box<Orange> boxO1 = new Box<>();
-        Box<Apple> boxA2 = new Box<>();
+        System.out.println(pb);
+        System.out.println(pb.get("Den"));
+        System.out.println(pb.get("Pit"));
 
-        boxA1.addFruit(new Apple());
-        boxA1.addFruit(new Apple());
-        boxA1.addFruit(new Apple());
-        boxA1.addFruit(new Apple());
+        ArrayList<String> words = new ArrayList<>(Arrays.asList(
+                "Создать", "массив", "c", "набором", "слов",
+                "10-20",  "слов", "должны", "встречаться", "повторяющиеся",
+                "Найти", "и",  "вывести", "список",  "уникальных", "слов",
+                "из", "которых", "состоит", "массив", "Посчитать", "сколько",
+                "раз", "встречается", "каждое", "слово"
+                ));
 
-        boxA2.addFruit(new Apple());
-
-        boxO1.addFruit(new Orange());
-
-        System.out.println(boxA1);
-        System.out.println(boxA2);
-        System.out.println(boxO1);
-
-        System.out.println("Box A1 is bigger then Box A2: " + boxA1.compare(boxA2));
-        System.out.println("Box A1 is bigger then Box O1: " + boxA1.compare(boxO1));
-
-        boxA1.moveTo(boxA2);
-        System.out.println(boxA1);
-        System.out.println(boxA2);
-
-
-
-        TaskService tracker = new TaskService();
-        tracker.test();
+        //TaskService tracker = new TaskService();
+        //tracker.test();
     }
 }

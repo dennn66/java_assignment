@@ -1,3 +1,5 @@
+Git: https://github.com/dennn66/java_assignment/commit/3efe8a36fdb929662a94b427466da5860309dfe1
+
 package GenericAssignement;
 
 public abstract class Fruit {
