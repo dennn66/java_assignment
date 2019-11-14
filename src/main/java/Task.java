@@ -1,16 +1,24 @@
-public class Task {
+public class Task implements  Comparable<Task>{
     private Long id;//id,
     private String name;// название,
     private String creator;// имя владельца задачи,
     private String assignee; // имя исполнителя,
     private String description; // описание,
     private Status status; // статус
-    enum Status {
-        CREATED("Открыта"), ASSIGNED("Назначена"), COMPLETED("Завершена");
-        String name;
 
-        Status(String name) {
+    @Override
+    public int compareTo(Task task) {
+        return status.priority - task.status.priority;
+    }
+
+    enum Status {
+        CREATED("Открыта", 1), ASSIGNED("Назначена", 2), COMPLETED("Завершена", 3);
+        String name;
+        int priority;
+
+        Status(String name, int priority) {
             this.name = name;
+            this.priority = priority;
         }
 
         @Override
@@ -33,7 +41,11 @@ public class Task {
     public void closeTask() {
         status = Status.COMPLETED;
     }
-    public void setAssignee(String assignee) { this.assignee = assignee; }
+    public void setAssignee(String assignee) {
+        this.assignee = assignee;
+        if(assignee != null) status = Status.ASSIGNED;
+        else status = Status.CREATED;
+    }
     public Long getId() { return id; }
     public String getName() { return name; }
 
