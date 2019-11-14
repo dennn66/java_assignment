@@ -1,0 +1,237 @@
+public interface TaskRepository {
+    Task findTask(Long taskId);
+    Task findTask(String taskName);
+    void addTask(Task task);
+    void deleteTask(Long taskId);
+    void deleteTask(String taskName);
+    String toString();
+}
+
+public class TaskService implements TaskRepository {
+    private TaskRepository tasks;
+
+    public TaskService() {
+        this.tasks = new TaskArray();
+    }
+
+    public void addTask(Task task) { tasks.addTask(task); }
+    public Task findTask(Long taskId) { return tasks.findTask(taskId);}
+    public Task findTask(String taskName) {return tasks.findTask(taskName);}
+    public void deleteTask(Long taskId) { tasks.deleteTask(taskId);}
+    public void deleteTask(String taskName) {tasks.deleteTask(taskName);}
+
+    @Override
+    public String toString() {return tasks.toString(); }
+
+    public void info(){
+        System.out.println(this);
+    }
+}
+
+
+public class TaskArray implements TaskRepository {
+    private Task[] tasks;
+    private final int size = 10;
+
+    public TaskArray() {
+        this.tasks = new Task[size];
+    }
+
+    private Task getTask(Integer index) {
+        if(index != null && index >= 0 && index < size) return tasks[index];
+        else return null;
+    }
+
+    private void setTask(Integer index, Task task) {
+        if(index != null && index >= 0 && index < size) this.tasks[index] = task;
+        else System.out.println("ERROR: Index out of range");
+    }
+
+
+    private Integer findTaskIndex(Long taskId) {
+        for(int index = 0; index < size; index++){
+            if(getTask(index) != null && getTask(index).getId().equals(taskId)){
+                return index;
+            }
+        }
+        return null;
+    }
+
+    private Integer findTaskIndex(String taskName) {
+        for(int index = 0; index < size; index++){
+            if(getTask(index) != null && getTask(index).getName().equals(taskName)){
+                return index;
+            }
+        }
+        return null;
+    }
+    private Integer findTaskIndex(Task task) {
+        for(int index = 0; index < size; index++){
+            if(task == null){
+                if(getTask(index) == null){
+                    return index;
+                }
+            } else if(getTask(index).equals(task)){
+                return index;
+            }
+        }
+        return null;
+    }
+
+    private void deleteTaskByIndex(Integer index) {
+        if(index != null){
+            setTask(index, null);
+        } else {
+            System.out.println("ERROR: Task not found");
+        }
+    }
+
+
+    @Override
+    public void addTask(Task task) {
+        if(task == null) return;
+        Integer index = findTaskIndex((Task) null);
+        if(index == null) {
+            System.out.println("ERROR: Task list is full, task '" + task.getName() + "' isn't inserted");
+        } else {
+            setTask(index,task);
+        }
+    }
+
+    @Override
+    public Task findTask(Long taskId) { return getTask(findTaskIndex(taskId)); }
+
+    @Override
+    public Task findTask(String taskName) { return getTask(findTaskIndex(taskName)); }
+
+    @Override
+    public void deleteTask(Long taskId) { deleteTaskByIndex(findTaskIndex(taskId)); }
+
+    @Override
+    public void deleteTask(String taskName) { deleteTaskByIndex(findTaskIndex(taskName)); }
+
+    @Override
+    public String toString() {
+        StringBuilder taskList = new StringBuilder();
+        for (Task task : tasks) {
+            if (task != null) taskList.append(task).append("\r\n");
+        }
+        return taskList.toString();
+    }
+}
+
+public class Task {
+    private Long id;//id,
+    private String name;// название,
+    private String creator;// имя владельца задачи,
+    private String assignee; // имя исполнителя,
+    private String description; // описание,
+    private Status status; // статус
+    enum Status {
+        CREATED("Открыта"), ASSIGNED("Назначена"), COMPLETED("Завершена");
+        String name;
+
+        Status(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "'" + name + "'";
+        }
+    }
+
+    public Task(Long id, String name, String creator, String description) {
+        this.id = id;
+        this.name = name;
+        this.creator = creator;
+        this.description = description;
+        this.status = Status.CREATED;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void closeTask() {
+        this.status = Status.COMPLETED;
+    }
+
+    public void setAssignee(String assignee) {
+        if(this.status != Status.COMPLETED) {
+            this.assignee = assignee;
+            this.status = (this.assignee == null) ? Status.CREATED : Status.ASSIGNED;
+        } else {
+            //Raise Exception
+            System.out.println("ERROR: Task is completed");
+        }
+
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return id +
+                " " + name +
+                " status:" + status +
+                " assignee:" + assignee +
+                " author:" + creator +
+                " description: " + description;
+    }
+
+    public void info(){
+        System.out.println(this);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(
+                this.id == null ||
+                this.name == null ||
+                !(obj instanceof Task) ||
+                ((Task) obj).id == null ||
+                ((Task) obj).name == null
+        ) return false;
+        return ((Task)obj).id.equals(this.id) && ((Task)obj).name.equals(this.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) ((this.id + name.hashCode()) % Integer.MAX_VALUE);
+    }
+}
+
+
+public class MainApp {
+    public static void main(String[] args) {
+        System.out.println("Program start");
+        TaskService tracker = new TaskService();
+        for(Long taskId = 1000L; taskId< 1011L; taskId++){
+            Task task = new Task(taskId, "Important task #" + taskId, "Bill",  "very important task");
+            tracker.addTask(task);
+            task.info();
+        }
+        tracker.addTask(null);
+        tracker.findTask(1004L).setAssignee("John");
+        tracker.findTask("Important task #1006").setAssignee("John");
+        tracker.findTask("Important task #1002").closeTask();
+        tracker.findTask("Important task #1002").setAssignee("John");
+        tracker.deleteTask(1003L);
+        tracker.deleteTask(1015L);
+        tracker.deleteTask("Important task #1007");
+        tracker.deleteTask("Important task #1015");
+        tracker.info();
+    }
+}
+
+
+
+
+

@@ -1,0 +1,112 @@
+public class Task {
+    private int id;//id,
+    private String name;// название,
+    private String creator;// имя владельца задачи,
+    private String assignee; // имя исполнителя,
+    private String description; // описание,
+    private String status; // статус
+
+    public Task(int id, String name, String creator, String assignee, String description, String status) {
+        this.id = id;
+        this.name = name;
+        this.creator = creator;
+        this.assignee = assignee;
+        this.description = description;
+        this.status = status;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return id +
+                " " + name +
+                " status:" + status +
+                " assignee:" + assignee +
+                " author:" + creator +
+                " description: " + description;
+    }
+
+    public void info(){
+        System.out.println(this);
+    }
+}
+
+
+
+public class TaskService {
+    private Task[] tasks;
+
+    public TaskService() {
+        this.tasks = new Task[10];
+    }
+
+    public void addTask(Task task) {
+        if(task == null) return;
+        for(int index = 0; index < tasks.length; index++){
+            if(tasks[index] == null){
+                tasks[index] = task;
+                return;
+            }
+        }
+        System.out.println("ERROR: Task list is full, task '" + task.getName() + "' isn't inserted");
+    }
+
+    public void deleteTask(int task_id) {
+        for(int index = 0; index < tasks.length; index++){
+            if(tasks[index] != null && tasks[index].getId() == task_id){
+                tasks[index] = null;
+                return;
+            }
+        }
+        System.out.println("ERROR: Task not found (id = " + task_id + ")");
+    }
+
+    public void deleteTask(String task_name) {
+        for(int index = 0; index < tasks.length; index++){
+            if(tasks[index] != null && tasks[index].getName().equals(task_name)){
+                tasks[index] = null;
+                return;
+            }
+        }
+        System.out.println("ERROR: Task not found (name: '" + task_name + "')");
+    }
+
+    @Override
+    public String toString() {
+        String taskList = "";
+        for(Task task: this.tasks){
+            if(task != null) taskList += task.toString() + "\r\n";
+        }
+        return taskList;
+    }
+
+    public void info(){
+        System.out.println(this);
+    }
+}
+
+public class MainApp {
+    public static void main(String[] args) {
+        System.out.println("Program start");
+        TaskService tracker = new TaskService();
+        for(int i = 0; i< 11; i++){
+            Task task = new Task(i, "Important task #" + i, "Bill", "John",
+                    "very important task", "assigned");
+            tracker.addTask(task);
+            task.info();
+        }
+        tracker.addTask(null);
+        tracker.deleteTask(3);
+        tracker.deleteTask(15);
+        tracker.deleteTask("Important task #7");
+        tracker.deleteTask("Important task #15");
+        tracker.info();
+    }
+}

@@ -1,0 +1,92 @@
+package com.dennn66.phonebook;
+
+public class PhonebookRecord {
+    int id;
+    String name;
+
+    public PhonebookRecord(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return "PhonebookRecord{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
+}
+
+
+package com.dennn66.phonebook;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Phonebook {
+    private HashMap<PhonebookRecord, String> phonebook;
+    private int pbIndex;
+
+    public Phonebook() {
+        phonebook = new HashMap<>();
+    }
+
+    public Phonebook get(String name) {
+        Phonebook filterdRecords = new Phonebook();
+        for(Map.Entry<PhonebookRecord, String> o: phonebook.entrySet()){
+            if(o.getKey().getName().equals(name)) filterdRecords.add(o.getKey().getName(), o.getValue());
+        }
+        return filterdRecords;
+    }
+
+    public void add(String name, String phone) {
+        phonebook.put(new PhonebookRecord(pbIndex++, name), phone);
+    }
+
+    @Override
+    public String toString() {
+        return "Phonebook{" +
+                "phonebook=" + phonebook +
+                '}';
+    }
+}
+import com.dennn66.phonebook.Phonebook;
+
+import java.util.*;
+
+public class MainApp {
+    public static void main(String[] args) {
+        System.out.println("Program start");
+        Phonebook pb = new Phonebook();
+        pb.add("Den", "+79999999999");
+        pb.add("Den", "+79999999998");
+        pb.add("Pit", "+79999999997");
+
+        System.out.println(pb);
+        System.out.println(pb.get("Den"));
+        System.out.println(pb.get("Pit"));
+
+        ArrayList<String> words = new ArrayList<>(Arrays.asList(
+                "Создать", "массив", "c", "набором", "слов",
+                "10-20",  "слов", "должны", "встречаться", "повторяющиеся",
+                "Найти", "и",  "вывести", "список",  "уникальных", "слов",
+                "из", "которых", "состоит", "массив", "Посчитать", "сколько",
+                "раз", "встречается", "каждое", "слово"
+                ));
+        System.out.println(words);
+        System.out.println(new HashSet<>(words));
+
+        HashMap <String, Integer> counter = new HashMap<>();
+        for (String word: words){
+            Integer entryCounter = counter.get(word);
+            if(entryCounter == null) entryCounter = 0;
+            counter.put(word, ++entryCounter);
+        }
+        System.out.println(counter);
+    }
+}
