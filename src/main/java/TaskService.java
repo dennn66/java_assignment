@@ -31,18 +31,18 @@ public class TaskService {
     }
 
     public Task findTask(Long taskId)       {
-        try {
-            return taskRepository.getTasks().stream().filter(t -> t.getId().equals(taskId)).findFirst().get();
-        } catch (NoSuchElementException e) {
-            throw new TaskNotFoundException("Task not found");
-        }
+        return taskRepository.getTasks().stream().
+                filter(t -> t.getId().
+                equals(taskId)).
+                findFirst().
+                orElseThrow(() -> new TaskNotFoundException("Task not found"));
     }
     public Task findTask(String taskName)   {
-        try {
-            return taskRepository.getTasks().stream().filter(t -> t.getName().equals(taskName)).findFirst().get();
-        } catch (NoSuchElementException e) {
-            throw new TaskNotFoundException("Task not found");
-        }
+        return taskRepository.getTasks().stream().
+                filter(t -> t.getName().
+                equals(taskName)).
+                findFirst().
+                orElseThrow(() -> new TaskNotFoundException("Task not found"));
     }
     public void deleteTask(Long taskId)     { taskRepository.deleteTask(findTask(taskId));}
     public void deleteTask(String taskName) { taskRepository.deleteTask(findTask(taskName));}
