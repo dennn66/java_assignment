@@ -11,6 +11,10 @@ public class Task implements  Comparable<Task>{
         return status.priority - task.status.priority;
     }
 
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     enum Status {
         CREATED("Открыта", 1), ASSIGNED("Назначена", 2), COMPLETED("Завершена", 3);
         String name;
@@ -32,7 +36,20 @@ public class Task implements  Comparable<Task>{
         this.name = name;
         this.creator = creator;
         this.description = description;
+        assignee = "";
         status = Status.CREATED;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public String getAssignee() {
+        return assignee;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public Status getStatus() {

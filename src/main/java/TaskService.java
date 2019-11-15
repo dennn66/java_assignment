@@ -1,6 +1,5 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.io.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -14,15 +13,61 @@ public class TaskService {
     public void addTask(Task task)          { taskRepository.addTask(task); }
     public void updateTask(Task task)       { taskRepository.updateTask(task); }
 
+    public void exportTasks(String filename, List <Task> tasks){
+        try(DataOutputStream out = new DataOutputStream(new FileOutputStream(filename))){
+            System.out.println("exporting " + tasks.size() + " tasks to " + filename + "...");
+            taskRepository.getTasks().forEach(task -> {
+                try {
+                    System.out.println("exporting task " + task.getId() + "...");
+                    out.writeLong(task.getId());
+                    out.writeUTF(task.getName());
+                    out.writeUTF(task.getCreator());
+                    out.writeUTF(task.getAssignee());
+                    out.writeUTF(task.getDescription());
+                    out.writeUTF(task.getStatus().name());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List <Task> importTasks(String filename){
+        ArrayList<Task> tasks = new ArrayList<>();
+        try(DataInputStream in = new DataInputStream(new FileInputStream(filename))){
+            System.out.println("importing tasks from " + filename + "...");
+            while(true) {
+                Long id = in.readLong();//id,
+                System.out.println("importing task " + id + "...");
+                String name = in.readUTF();// название,
+                String creator = in.readUTF();// имя владельца задачи,
+                String assignee = in.readUTF(); // имя исполнителя,
+                String description = in.readUTF(); // описание,
+                String status = in.readUTF(); // статус
+
+                Task task = new Task(id, name, creator, description);
+                task.setAssignee(assignee);
+                task.setStatus(Task.Status.valueOf(status));
+                tasks.add(task);
+                System.out.println(task);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            //e.printStackTrace();
+            System.out.println("Tasks import is completed. Loaded " + tasks.size() + " tasks");
+        }
+        return tasks;
+    }
 
     public List<Task> findTasksByStatus(Task.Status status)       {
-
         return taskRepository.getTasks().stream().filter(t -> t.getStatus() == status).collect(Collectors.toList());
-
     }
 
     public List<Task> sortTasksByStatus()       {
-
         return taskRepository.getTasks().stream().sorted().collect(Collectors.toList());
     }
 
@@ -32,15 +77,13 @@ public class TaskService {
 
     public Task findTask(Long taskId)       {
         return taskRepository.getTasks().stream().
-                filter(t -> t.getId().
-                equals(taskId)).
+                filter(t -> t.getId().equals(taskId)).
                 findFirst().
                 orElseThrow(() -> new TaskNotFoundException("Task not found"));
     }
     public Task findTask(String taskName)   {
         return taskRepository.getTasks().stream().
-                filter(t -> t.getName().
-                equals(taskName)).
+                filter(t -> t.getName().equals(taskName)).
                 findFirst().
                 orElseThrow(() -> new TaskNotFoundException("Task not found"));
     }
@@ -118,5 +161,7 @@ public class TaskService {
         } catch (TaskNotFoundException e) {
             System.out.println(e.getMessage());
         }
+        exportTasks("tasks.data", taskRepository.getTasks());
+        System.out.println(importTasks("tasks.data"));
     }
 }
