@@ -1,8 +1,10 @@
-import java.util.ArrayList;
+import java.sql.SQLException;
+import java.util.List;
 
 public interface TaskRepository {
-    void addTask(Task task);
+    void addTask(Task task) ;
     void updateTask(Task task);
     void deleteTask(Task task);
-    ArrayList<Task> getTasks();
+    List<Task> getTasks();
+    void clear();
 }

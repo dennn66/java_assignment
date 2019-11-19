@@ -1,4 +1,5 @@
 import java.io.*;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -6,17 +7,17 @@ import java.util.stream.Collectors;
 public class TaskService {
     private TaskRepository taskRepository;
 
-    public TaskService() {
-        taskRepository = new TaskList();
+    public TaskService() throws SQLException, ClassNotFoundException {
+        taskRepository = new TaskDB();
     }
 
-    public void addTask(Task task)          { taskRepository.addTask(task); }
-    public void updateTask(Task task)       { taskRepository.updateTask(task); }
+    public void addTask(Task task)          {taskRepository.addTask(task);}
+    public void updateTask(Task task)       {taskRepository.updateTask(task);}
 
     public void exportTasks(String filename, List <Task> tasks){
         try(DataOutputStream out = new DataOutputStream(new FileOutputStream(filename))){
             System.out.println("exporting " + tasks.size() + " tasks to " + filename + "...");
-            taskRepository.getTasks().forEach(task -> {
+            tasks.forEach(task -> {
                 try {
                     System.out.println("exporting task " + task.getId() + "...");
                     out.writeLong(task.getId());
@@ -87,12 +88,12 @@ public class TaskService {
                 findFirst().
                 orElseThrow(() -> new TaskNotFoundException("Task not found"));
     }
-    public void deleteTask(Long taskId)     { taskRepository.deleteTask(findTask(taskId));}
-    public void deleteTask(String taskName) { taskRepository.deleteTask(findTask(taskName));}
+    public void deleteTask(Long taskId)     {taskRepository.deleteTask(findTask(taskId));}
+    public void deleteTask(String taskName) {taskRepository.deleteTask(findTask(taskName));}
 
     @Override
     public String toString() {
-        ArrayList <Task> tasks = taskRepository.getTasks();
+        List <Task> tasks = taskRepository.getTasks();
         StringBuilder taskList = new StringBuilder();
         for (Task task : tasks) {
             if (task != null) taskList.append(task).append("\r\n");
@@ -105,6 +106,7 @@ public class TaskService {
     }
 
     public void test(){
+        taskRepository.clear();
 
         for(Long taskId = 1000L; taskId< 1011L; taskId++){
             Task task = new Task(taskId, "Important task #" + taskId, "Bill",  "very important task");
@@ -115,9 +117,24 @@ public class TaskService {
                 System.out.println(e.getMessage());
             }
         }
-        //addTask(null);
+        try {
+            System.out.println("Adding null task...");
+            addTask(null);
+        } catch (NullPointerException e){
+            System.out.println(e.getMessage());
+        }
+        try {
+            System.out.println("Adding existing task...");
+            addTask(new Task(1000L, "Important task #double", "Bill",  "very important task"));
+        } catch (TaskExistException e){
+            System.out.println(e.getMessage());
+        }
+
         System.out.println("Find existing task:");
-        findTask(1004L).info();
+        Task t = findTask(1004L);
+        t.info();
+        t.setStatus(Task.Status.COMPLETED);
+        taskRepository.updateTask(t);
         System.out.println("Find not existing task:");
         try {
             findTask(1040L).info();
@@ -126,9 +143,9 @@ public class TaskService {
         }
 
         findTask(1004L).setAssignee("John");
-        findTask("Important task #1006").setAssignee("John");
+        //findTask("Important task #1006").setAssignee("John");
         findTask("Important task #1008").closeTask();
-        findTask("Important task #1002").setAssignee("John");
+        //findTask("Important task #1002").setAssignee("John");
         deleteTask(1003L);
         try {
             deleteTask(1015L);
@@ -144,23 +161,11 @@ public class TaskService {
         info();
         //System.out.println(findTasksByStatus(Task.Status.ASSIGNED));
         System.out.println("findTasksByStatus");
-        try {
-            System.out.println(findTasksByStatus(Task.Status.ASSIGNED));
-        } catch (TaskNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
+        System.out.println(findTasksByStatus(Task.Status.ASSIGNED));
         System.out.println("sortTasksByStatus");
-        try {
-            System.out.println(sortTasksByStatus());
-        } catch (TaskNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
+        System.out.println(sortTasksByStatus());
         System.out.println("countTasksByStatus");
-        try {
-            System.out.println(countTasksByStatus(Task.Status.ASSIGNED));
-        } catch (TaskNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
+        System.out.println(countTasksByStatus(Task.Status.ASSIGNED));
         exportTasks("tasks.data", taskRepository.getTasks());
         System.out.println(importTasks("tasks.data"));
     }

@@ -31,6 +31,14 @@ public class Task implements  Comparable<Task>{
         }
     }
 
+public Task(Long id, String name, String creator, String assignee, String description, Status status) {
+    this.id = id;
+    this.name = name;
+    this.creator = creator;
+    this.assignee = assignee;
+    this.description = description;
+    this.status = status;
+}
     public Task(Long id, String name, String creator, String description) {
         this.id = id;
         this.name = name;
