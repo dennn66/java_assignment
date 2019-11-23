@@ -1,22 +1,22 @@
-public interface TaskRepository {
-    Task findTask(Long taskId);
-    Task findTask(String taskName);
-    void addTask(Task task);
+public interface com.dennn66.tasktracker.TaskRepository {
+    com.dennn66.tasktracker.Task findTask(Long taskId);
+    com.dennn66.tasktracker.Task findTask(String taskName);
+    void addTask(com.dennn66.tasktracker.Task task);
     void deleteTask(Long taskId);
     void deleteTask(String taskName);
     String toString();
 }
 
-public class TaskService implements TaskRepository {
-    private TaskRepository tasks;
+public class com.dennn66.tasktracker.TaskService implements com.dennn66.tasktracker.TaskRepository {
+    private com.dennn66.tasktracker.TaskRepository tasks;
 
-    public TaskService() {
+    public com.dennn66.tasktracker.TaskService() {
         this.tasks = new TaskArray();
     }
 
-    public void addTask(Task task) { tasks.addTask(task); }
-    public Task findTask(Long taskId) { return tasks.findTask(taskId);}
-    public Task findTask(String taskName) {return tasks.findTask(taskName);}
+    public void addTask(com.dennn66.tasktracker.Task task) { tasks.addTask(task); }
+    public com.dennn66.tasktracker.Task findTask(Long taskId) { return tasks.findTask(taskId);}
+    public com.dennn66.tasktracker.Task findTask(String taskName) {return tasks.findTask(taskName);}
     public void deleteTask(Long taskId) { tasks.deleteTask(taskId);}
     public void deleteTask(String taskName) {tasks.deleteTask(taskName);}
 
@@ -29,20 +29,20 @@ public class TaskService implements TaskRepository {
 }
 
 
-public class TaskArray implements TaskRepository {
-    private Task[] tasks;
+public class TaskArray implements com.dennn66.tasktracker.TaskRepository {
+    private com.dennn66.tasktracker.Task[] tasks;
     private final int size = 10;
 
     public TaskArray() {
-        this.tasks = new Task[size];
+        this.tasks = new com.dennn66.tasktracker.Task[size];
     }
 
-    private Task getTask(Integer index) {
+    private com.dennn66.tasktracker.Task getTask(Integer index) {
         if(index != null && index >= 0 && index < size) return tasks[index];
         else return null;
     }
 
-    private void setTask(Integer index, Task task) {
+    private void setTask(Integer index, com.dennn66.tasktracker.Task task) {
         if(index != null && index >= 0 && index < size) this.tasks[index] = task;
         else System.out.println("ERROR: Index out of range");
     }
@@ -65,7 +65,7 @@ public class TaskArray implements TaskRepository {
         }
         return null;
     }
-    private Integer findTaskIndex(Task task) {
+    private Integer findTaskIndex(com.dennn66.tasktracker.Task task) {
         for(int index = 0; index < size; index++){
             if(task == null){
                 if(getTask(index) == null){
@@ -82,27 +82,27 @@ public class TaskArray implements TaskRepository {
         if(index != null){
             setTask(index, null);
         } else {
-            System.out.println("ERROR: Task not found");
+            System.out.println("ERROR: com.dennn66.tasktracker.Task not found");
         }
     }
 
 
     @Override
-    public void addTask(Task task) {
+    public void addTask(com.dennn66.tasktracker.Task task) {
         if(task == null) return;
-        Integer index = findTaskIndex((Task) null);
+        Integer index = findTaskIndex((com.dennn66.tasktracker.Task) null);
         if(index == null) {
-            System.out.println("ERROR: Task list is full, task '" + task.getName() + "' isn't inserted");
+            System.out.println("ERROR: com.dennn66.tasktracker.Task list is full, task '" + task.getName() + "' isn't inserted");
         } else {
             setTask(index,task);
         }
     }
 
     @Override
-    public Task findTask(Long taskId) { return getTask(findTaskIndex(taskId)); }
+    public com.dennn66.tasktracker.Task findTask(Long taskId) { return getTask(findTaskIndex(taskId)); }
 
     @Override
-    public Task findTask(String taskName) { return getTask(findTaskIndex(taskName)); }
+    public com.dennn66.tasktracker.Task findTask(String taskName) { return getTask(findTaskIndex(taskName)); }
 
     @Override
     public void deleteTask(Long taskId) { deleteTaskByIndex(findTaskIndex(taskId)); }
@@ -113,14 +113,14 @@ public class TaskArray implements TaskRepository {
     @Override
     public String toString() {
         StringBuilder taskList = new StringBuilder();
-        for (Task task : tasks) {
+        for (com.dennn66.tasktracker.Task task : tasks) {
             if (task != null) taskList.append(task).append("\r\n");
         }
         return taskList.toString();
     }
 }
 
-public class Task {
+public class com.dennn66.tasktracker.Task {
     private Long id;//id,
     private String name;// название,
     private String creator;// имя владельца задачи,
@@ -141,7 +141,7 @@ public class Task {
         }
     }
 
-    public Task(Long id, String name, String creator, String description) {
+    public com.dennn66.tasktracker.Task(Long id, String name, String creator, String description) {
         this.id = id;
         this.name = name;
         this.creator = creator;
@@ -163,7 +163,7 @@ public class Task {
             this.status = (this.assignee == null) ? Status.CREATED : Status.ASSIGNED;
         } else {
             //Raise Exception
-            System.out.println("ERROR: Task is completed");
+            System.out.println("ERROR: com.dennn66.tasktracker.Task is completed");
         }
 
     }
@@ -195,11 +195,11 @@ public class Task {
         if(
                 this.id == null ||
                 this.name == null ||
-                !(obj instanceof Task) ||
-                ((Task) obj).id == null ||
-                ((Task) obj).name == null
+                !(obj instanceof com.dennn66.tasktracker.Task) ||
+                ((com.dennn66.tasktracker.Task) obj).id == null ||
+                ((com.dennn66.tasktracker.Task) obj).name == null
         ) return false;
-        return ((Task)obj).id.equals(this.id) && ((Task)obj).name.equals(this.name);
+        return ((com.dennn66.tasktracker.Task)obj).id.equals(this.id) && ((com.dennn66.tasktracker.Task)obj).name.equals(this.name);
     }
 
     @Override
@@ -209,12 +209,12 @@ public class Task {
 }
 
 
-public class MainApp {
+public class com.dennn66.tasktracker.MainApp {
     public static void main(String[] args) {
         System.out.println("Program start");
-        TaskService tracker = new TaskService();
+        com.dennn66.tasktracker.TaskService tracker = new com.dennn66.tasktracker.TaskService();
         for(Long taskId = 1000L; taskId< 1011L; taskId++){
-            Task task = new Task(taskId, "Important task #" + taskId, "Bill",  "very important task");
+            com.dennn66.tasktracker.Task task = new com.dennn66.tasktracker.Task(taskId, "Important task #" + taskId, "Bill",  "very important task");
             tracker.addTask(task);
             task.info();
         }

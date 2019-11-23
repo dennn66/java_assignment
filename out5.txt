@@ -1,4 +1,4 @@
-Git: https://github.com/dennn66/java_assignment/commit/3efe8a36fdb929662a94b427466da5860309dfe1
+Git: https://github.com/com.dennn66/java_assignment/commit/3efe8a36fdb929662a94b427466da5860309dfe1
 
 package GenericAssignement;
 
@@ -92,7 +92,7 @@ import GenericAssignement.Apple;
 import GenericAssignement.Box;
 import GenericAssignement.Orange;
 
-public class MainApp {
+public class com.dennn66.tasktracker.MainApp {
     public static void main(String[] args) {
         System.out.println("Program start");
 
@@ -122,32 +122,32 @@ public class MainApp {
 
 
 
-        TaskService tracker = new TaskService();
+        com.dennn66.tasktracker.TaskService tracker = new com.dennn66.tasktracker.TaskService();
         tracker.test();
     }
 }
 
 import java.util.ArrayList;
 
-public class TaskList implements TaskRepository {
-    private ArrayList<Task> tasks;
+public class com.dennn66.tasktracker.TaskList implements com.dennn66.tasktracker.TaskRepository {
+    private ArrayList<com.dennn66.tasktracker.Task> tasks;
 
-    public TaskList() {
+    public com.dennn66.tasktracker.TaskList() {
         tasks = new ArrayList<>();
     }
 
-    private Task getTask(Integer index)   {
+    private com.dennn66.tasktracker.Task getTask(Integer index)   {
         if(index != null && index >= 0 && index < tasks.size()) return tasks.get(index);
-        else throw new TaskNotFoundException("Task not found");
+        else throw new com.dennn66.tasktracker.TaskNotFoundException("com.dennn66.tasktracker.Task not found");
     }
 
-    private void setTask(Integer index, Task task)  {
+    private void setTask(Integer index, com.dennn66.tasktracker.Task task)  {
         if(index != null && index >= 0 && index < tasks.size()) tasks.set(index, task);
-        else throw new TaskNotFoundException("Task not found");
+        else throw new com.dennn66.tasktracker.TaskNotFoundException("com.dennn66.tasktracker.Task not found");
     }
     private void deleteTaskByIndex(Integer index) {
         if(index != null && index >= 0 && index < tasks.size()) tasks.remove(index);
-        else throw new TaskNotFoundException("Task not found");
+        else throw new com.dennn66.tasktracker.TaskNotFoundException("com.dennn66.tasktracker.Task not found");
     }
 
 
@@ -168,19 +168,19 @@ public class TaskList implements TaskRepository {
     }
 
     @Override
-    public void addTask(Task task) {
-        if(tasks.indexOf(task) >= 0)  throw new TaskExistException("Task '" + task.getName() + "' already exist");
+    public void addTask(com.dennn66.tasktracker.Task task) {
+        if(tasks.indexOf(task) >= 0)  throw new com.dennn66.tasktracker.TaskExistException("com.dennn66.tasktracker.Task '" + task.getName() + "' already exist");
         tasks.add(task);
     }
 
     @Override
-    public void updateTask(Task task) { setTask(tasks.indexOf(task), task);   }
+    public void updateTask(com.dennn66.tasktracker.Task task) { setTask(tasks.indexOf(task), task);   }
 
     @Override
-    public Task findTask(Long taskId) { return getTask(findTaskIndex(taskId)); }
+    public com.dennn66.tasktracker.Task findTask(Long taskId) { return getTask(findTaskIndex(taskId)); }
 
     @Override
-    public Task findTask(String taskName)   { return getTask(findTaskIndex(taskName)); }
+    public com.dennn66.tasktracker.Task findTask(String taskName)   { return getTask(findTaskIndex(taskName)); }
 
     @Override
     public void deleteTask(Long taskId)   { deleteTaskByIndex(findTaskIndex(taskId)); }
@@ -189,7 +189,7 @@ public class TaskList implements TaskRepository {
     public void deleteTask(String taskName)   { deleteTaskByIndex(findTaskIndex(taskName)); }
 
     @Override
-    public ArrayList<Task>  getTasks() { return tasks; }
+    public ArrayList<com.dennn66.tasktracker.Task>  getTasks() { return tasks; }
 }
 
 
