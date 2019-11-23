@@ -3,7 +3,11 @@ package com.dennn66.tasktracker;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -11,15 +15,25 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class TaskDB  implements TaskRepository {
+
 
     private SessionFactory factory;
 
-    public TaskDB(SessionFactory factory) {
-        this.factory = factory;
+    public TaskDB() {
+    }
+
+    @PostConstruct
+    public void init(){
         createTableEx();
     }
 
+    @Autowired
+    @Qualifier(value = "factory")
+    public void setFactory(SessionFactory factory) {
+        this.factory = factory;
+    }
 
     @Override
     public void addTask(Task task) {
