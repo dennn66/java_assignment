@@ -1,4 +1,4 @@
-package com.dennn66.phonebook;
+package com.com.dennn66.phonebook;
 
 public class PhonebookRecord {
     int id;
@@ -23,7 +23,7 @@ public class PhonebookRecord {
 }
 
 
-package com.dennn66.phonebook;
+package com.com.dennn66.phonebook;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,11 +55,11 @@ public class Phonebook {
                 '}';
     }
 }
-import com.dennn66.phonebook.Phonebook;
+import com.com.dennn66.phonebook.Phonebook;
 
 import java.util.*;
 
-public class MainApp {
+public class com.dennn66.tasktracker.MainApp {
     public static void main(String[] args) {
         System.out.println("Program start");
         Phonebook pb = new Phonebook();

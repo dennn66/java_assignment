@@ -1,9 +1,25 @@
-public class Task implements  Comparable<Task>{
+package com.dennn66.tasktracker;
+
+import javax.persistence.*;
+import java.io.Serializable;
+
+@Entity
+@Table(name = "tasks")
+public class Task implements Serializable, Comparable<Task>{
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;//id,
+    @Column(name = "name")
     private String name;// название,
+    @Column(name = "creator")
     private String creator;// имя владельца задачи,
+    @Column(name = "assignee")
     private String assignee; // имя исполнителя,
+    @Column(name = "description")
     private String description; // описание,
+    @Column(name = "status")
     private Status status; // статус
 
     @Override
@@ -31,22 +47,24 @@ public class Task implements  Comparable<Task>{
         }
     }
 
-public Task(Long id, String name, String creator, String assignee, String description, Status status) {
-    this.id = id;
-    this.name = name;
-    this.creator = creator;
-    this.assignee = assignee;
-    this.description = description;
-    this.status = status;
+    public Task(String name, String creator, String assignee, String description, Status status) {
+        this.name = name;
+        this.creator = creator;
+        this.assignee = assignee;
+        this.description = description;
+        this.status = status;
 }
-    public Task(Long id, String name, String creator, String description) {
-        this.id = id;
+    public Task(String name, String creator, String description) {
         this.name = name;
         this.creator = creator;
         this.description = description;
         assignee = "";
         status = Status.CREATED;
     }
+
+    public Task() {
+    }
+
 
     public String getCreator() {
         return creator;
@@ -73,6 +91,22 @@ public Task(Long id, String name, String creator, String assignee, String descri
     }
     public Long getId() { return id; }
     public String getName() { return name; }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     @Override
     public String toString() {

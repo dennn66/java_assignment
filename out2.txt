@@ -1,4 +1,4 @@
-public class Task {
+public class com.dennn66.tasktracker.Task {
     private int id;//id,
     private String name;// название,
     private String creator;// имя владельца задачи,
@@ -6,7 +6,7 @@ public class Task {
     private String description; // описание,
     private String status; // статус
 
-    public Task(int id, String name, String creator, String assignee, String description, String status) {
+    public com.dennn66.tasktracker.Task(int id, String name, String creator, String assignee, String description, String status) {
         this.id = id;
         this.name = name;
         this.creator = creator;
@@ -40,14 +40,14 @@ public class Task {
 
 
 
-public class TaskService {
-    private Task[] tasks;
+public class com.dennn66.tasktracker.TaskService {
+    private com.dennn66.tasktracker.Task[] tasks;
 
-    public TaskService() {
-        this.tasks = new Task[10];
+    public com.dennn66.tasktracker.TaskService() {
+        this.tasks = new com.dennn66.tasktracker.Task[10];
     }
 
-    public void addTask(Task task) {
+    public void addTask(com.dennn66.tasktracker.Task task) {
         if(task == null) return;
         for(int index = 0; index < tasks.length; index++){
             if(tasks[index] == null){
@@ -55,7 +55,7 @@ public class TaskService {
                 return;
             }
         }
-        System.out.println("ERROR: Task list is full, task '" + task.getName() + "' isn't inserted");
+        System.out.println("ERROR: com.dennn66.tasktracker.Task list is full, task '" + task.getName() + "' isn't inserted");
     }
 
     public void deleteTask(int task_id) {
@@ -65,7 +65,7 @@ public class TaskService {
                 return;
             }
         }
-        System.out.println("ERROR: Task not found (id = " + task_id + ")");
+        System.out.println("ERROR: com.dennn66.tasktracker.Task not found (id = " + task_id + ")");
     }
 
     public void deleteTask(String task_name) {
@@ -75,13 +75,13 @@ public class TaskService {
                 return;
             }
         }
-        System.out.println("ERROR: Task not found (name: '" + task_name + "')");
+        System.out.println("ERROR: com.dennn66.tasktracker.Task not found (name: '" + task_name + "')");
     }
 
     @Override
     public String toString() {
         String taskList = "";
-        for(Task task: this.tasks){
+        for(com.dennn66.tasktracker.Task task: this.tasks){
             if(task != null) taskList += task.toString() + "\r\n";
         }
         return taskList;
@@ -92,12 +92,12 @@ public class TaskService {
     }
 }
 
-public class MainApp {
+public class com.dennn66.tasktracker.MainApp {
     public static void main(String[] args) {
         System.out.println("Program start");
-        TaskService tracker = new TaskService();
+        com.dennn66.tasktracker.TaskService tracker = new com.dennn66.tasktracker.TaskService();
         for(int i = 0; i< 11; i++){
-            Task task = new Task(i, "Important task #" + i, "Bill", "John",
+            com.dennn66.tasktracker.Task task = new com.dennn66.tasktracker.Task(i, "Important task #" + i, "Bill", "John",
                     "very important task", "assigned");
             tracker.addTask(task);
             task.info();
