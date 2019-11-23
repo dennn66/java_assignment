@@ -29,4 +29,9 @@ public class TaskList implements TaskRepository {
 
     @Override
     public ArrayList<Task>  getTasks() { return tasks; }
+
+    @Override
+    public void clear() {
+        tasks.clear();
+    }
 }
