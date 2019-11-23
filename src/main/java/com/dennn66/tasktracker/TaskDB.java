@@ -35,11 +35,7 @@ public class TaskDB  implements TaskRepository {
     public void updateTask(Task task) {
         try(Session session = factory.getCurrentSession()) {
             session.beginTransaction();
-            Task dbTask = session.get(Task.class, task.getId());
-            dbTask.setStatus(task.getStatus());
-            dbTask.setAssignee(task.getAssignee());
-            dbTask.setCreator(task.getCreator());
-            dbTask.setName(task.getName());
+            session.save(task);
             session.getTransaction().commit();
         }
     }
