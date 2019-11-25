@@ -1,17 +1,26 @@
 package com.dennn66.tasktracker;
 
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+@Service
 public class TaskService {
+
     private TaskRepository taskRepository;
 
-    public TaskService(SessionFactory factory) {
-        taskRepository = new TaskDB(factory);
+    public TaskService() {
+    }
+
+    @Autowired
+    @Qualifier(value = "taskDB")
+    public void setTaskRepository(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
     }
 
     public void addTask(Task task)          {taskRepository.addTask(task);}
