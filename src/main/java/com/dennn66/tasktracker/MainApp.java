@@ -8,6 +8,5 @@ public class MainApp {
                 new AnnotationConfigApplicationContext(TaskConfig.class);
         TaskService tracker = context.getBean("taskService", TaskService.class);
         tracker.test();
-        TaskFactory.close();
     }
 }

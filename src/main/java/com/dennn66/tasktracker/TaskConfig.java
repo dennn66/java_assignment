@@ -9,5 +9,8 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(basePackages = {"com.dennn66.tasktracker"})
 public class TaskConfig {
     @Bean
-    public SessionFactory factory() {return TaskFactory.getFactory();}
+    public SessionFactory factory() {return new org.hibernate.cfg.Configuration()
+            .configure("configs/hibernate.cfg.xml")
+            .buildSessionFactory();
+    }
 }
